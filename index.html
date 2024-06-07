@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form Login dan Kuis</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .welcome-message {
+    text-align: center;
+    display: none;
+  }
+  .login-container {
+    max-width: 400px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    animation: fadeIn 1s ease-out;
+  }
+  .quiz-container {
+    display: none;
+  }
+  .payment-container {
+    display: none;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #45a049;
+  }
+  .question {
+    margin-bottom: 10px;
+  }
+  .option {
+    margin-bottom: 5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="welcome-message" id="welcomeMessage">
+  <h1>Hallo!</h1>
+  <p>Selamat datang di server team.</p>
+</div>
+
+<div class="login-container" id="loginContainer">
+  <h2>Form Login</h2>
+  <div class="form-group">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+  </div>
+  <div class="form-group">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+  </div>
+  <div class="form-group">
+    <label for="code">Kode:</label>
+    <input type="text" id="code" name="code" required>
+  </div>
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="quiz-container" id="quizContainer">
+  <h2>Quiz Pilihan Ganda</h2>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+  <button onclick="submitAnswer()">Submit</button>
+</div>
+
+<div class="payment-container" id="paymentContainer">
+  <h2>Metode Pembayaran</h2>
+  <div class="form-group">
+    <label for="danaNumber">Nomor Dana:</label>
+    <input type="text" id="danaNumber" name="danaNumber" required>
+  </div>
+  <div class="form-group">
+    <label for="danaName">Nama Dana:</label>
+    <input type="text" id="danaName" name="danaName" required>
+  </div>
+  <div class="form-group">
+    <label for="danaStatus">Status Dana:</label>
+    <input type="text" id="danaStatus" name="danaStatus" required>
+  </div>
+  <button onclick="submitPayment()">Bayar</button>
+</div>
+
+<script>
+  var currentQuestionIndex = 0;
+  var correctAnswers = 0;
+  var questions = [
+    {
+      question: "Apa ibukota Indonesia?",
+      options: ["Jakarta", "Surabaya", "Bandung", "Yogyakarta"],
+      answer: "Jakarta"
+    },
+    {
+      question: "Berapakah hasil dari 2 + 2?",
+      options: ["3", "4", "5", "6"],
+      answer: "4"
+    },
+    // Tambahkan soal lainnya di sini
+  ];
+
+  // Tambahkan 18 soal lagi
+  questions.push(
+    // Soal ke-13
+    {
+      question: "Apa ibukota negara Jepang?",
+      options: ["Tokyo", "Kyoto", "Osaka", "Hiroshima"],
+      answer: "Tokyo"
+    },
+    // Soal ke-14
+    {
+      question: "Berapa jumlah benua di dunia?",
+      options: ["4", "5", "6", "7"],
+      answer: "7"
+    },
+    // Soal ke-15
+    {
+      question: "Apa nama samudra terluas di dunia?",
+      options: ["Samudra Hindia", "Samudra Atlantik", "Samudra Pasifik", "Samudra Arktik"],
+      answer: "Samudra Pasifik"
+    },
+    // Soal ke-16
+    {
+      question: "Apakah planet terbesar di tata surya kita?",
+      options: ["Bumi", "Mars", "Jupiter", "Saturnus"],
+      answer: "Jupiter"
+    },
+    // Soal ke-17
+    {
+      question: "Siapakah tokoh yang menjadi presiden pertama Amerika Serikat?",
+      options: ["George Washington", "Thomas Jefferson", "Abraham Lincoln", "John F. Kennedy"],
+      answer: "George Washington"
+    },
+    // Soal ke-18
+    {
+      question: "Apa nama kapal yang mengangkut penumpang dari Inggris menuju Amerika Serikat pada abad ke-20?",
+      options: ["Mayflower", "Titanic", "Lusitania", "Queen Elizabeth"],
+      answer: "Titanic"
+    },
+    // Soal ke-19
+    {
+      question: "Apakah nama yang diberikan pada kumpulan bintang di angkasa?",
+      options: ["Planet", "Galaksi", "Rasi bintang", "Bukit bintang"],
+      answer: "Rasi bintang"
+    },
+    // Soal ke-20
+    {
+      question: "Siapakah penulis drama terkenal 'Romeo and Juliet'?",
+      options: ["William Shakespeare", "Charles Dickens", "Jane Austen", "Leo Tolstoy"],
+      answer: "William Shakespeare"
+    },
+    // Soal ke-21
+    {
+      question: "Apakah nama yang diberikan pada lingkaran besar yang mengelilingi Bumi?",
+      options: ["Equator", "Prime Meridian", "Tropic of Cancer", "Arctic Circle"],
+      answer: "Equator"
+    },
+    // Soal ke-22
+    {
+      question: "Apa nama sungai terpanjang di dunia?",
+      options: ["Sungai Amazon", "Sungai Nil", "Sungai Mississippi", "Sungai Yangtze"],
+      answer: "Sungai Nil"
+    },
+    // Soal ke-23
+    {
+      question: "Berapakah jumlah warna pelangi?",
+      options: ["5", "6", "7", "8"],
+      answer: "7"
+    },
+    // Soal ke-24
+    {
+      question: "Siapakah tokoh ilmuwan yang menemukan hukum gravitasi?",
+      options: ["Albert Einstein", "Isaac Newton", "Galileo Galilei", "Nikola Tesla"],
+      answer: "Isaac Newton"
+    },
+    // Soal ke-25
+    {
+      question: "Apakah nama yang diberikan pada pembuat jam?",
+      options: ["Horologist", "Philologist", "Botanist", "Geologist"],
+      answer: "Horologist"
+    },
+    // Soal ke-26
+    {
+      question: "Apa nama benua terbesar di dunia?",
+      options: ["Asia", "Afrika", "Amerika Utara", "Eropa"],
+      answer: "Asia"
+    },
+    // Soal ke-27
+    {
+      question: "Siapakah tokoh yang menulis 'The Lord of the Rings'?",
+      options: ["J.R.R. Tolkien", "C.S. Lewis", "George R.R. Martin", "J.K. Rowling"],
+      answer: "J.R.R. Tolkien"
+    },
+    // Soal ke-28
+    {
+      question: "Apakah nama yang diberikan pada tempat dimana hewan hidup di alam liar?",
+      options: ["Kebun binatang", "Taman nasional", "Safari", "Habitat"],
+      answer: "Habitat"
+    },
+    // Soal ke-29
+    {
+      question: "Berapa jumlah presiden Amerika Serikat saat ini?",
+      options: ["42", "43", "44", "45"],
+      answer: "45"
+    },
+    // Soal ke-30
+    {
+      question: "Apakah nama ilmu yang mempelajari tentang burung?",
+      options: ["Ornithology", "Entomology", "Botany", "Zoology"],
+      answer: "Ornithology"
+    }
+  );
+
+  function login() {
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    var code = document.getElementById("code").value;
+
+    // Validasi kode
+    var validCodes = ["bhsdfgh", "adghj", "kjsbbhy", "kiijadg"];
+    if (!validCodes.includes(code)) {
+      alert("Kode tidak valid!");
+      return;
+    }
+
+    // Kirim data login ke server atau lakukan validasi lainnya
+    // Disini kita hanya menampilkan alert dengan informasi login
+    alert("Login berhasil!\nUsername: " + username + "\nPassword: " + password);
+
+    // Setelah login berhasil, tampilkan kuis
+    document.getElementById("loginContainer").style.display = "none";
+    document.getElementById("quizContainer").style.display = "block";
+    showQuestion();
+  }
+
+  function showQuestion() {
+    var currentQuestion = questions[currentQuestionIndex];
+    document.getElementById("question").innerHTML = currentQuestion.question;
+    var optionsHTML = "";
+    for (var i = 0; i < currentQuestion.options.length; i++) {
+      optionsHTML += '<div class="option"><input type="radio" name="option" value="' + currentQuestion.options[i] + '"> ' + currentQuestion.options[i] + '</div>';
+    }
+    document.getElementById("options").innerHTML = optionsHTML;
+  }
+
+  function submitAnswer() {
+    var selectedOption = document.querySelector('input[name="option"]:checked');
+    if (!selectedOption) {
+      alert("Pilih salah satu jawaban!");
+      return;
+    }
+    var selectedAnswer = selectedOption.value;
+    var correctAnswer = questions[currentQuestionIndex].answer;
+    if (selectedAnswer === correctAnswer) {
+      correctAnswers++;
+      alert("Jawaban benar!");
+    } else {
+      alert("Jawaban salah. Jawaban yang benar adalah: " + correctAnswer);
+    }
+    // Pindah ke soal berikutnya atau selesai jika sudah mencapai soal terakhir
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+      showQuestion();
+    } else {
+      alert("Quiz selesai!\nJumlah Soal yang Benar: " + correctAnswers + " dari " + questions.length);
+      // Menampilkan form pembayaran setelah quiz selesai
+      document.getElementById("quizContainer").style.display = "none";
+      document.getElementById("paymentContainer").style.display = "block";
+      setTimeout(function() {
+        alert("Waktu Anda habis! Silakan selesaikan pembayaran.");
+      }, 60000); // Setel waktu tunggu 1 menit (60 detik)
+    }
+  }
+
+  function submitPayment() {
+    var danaNumber = document.getElementById("danaNumber").value;
+    var danaName = document.getElementById("danaName").value;
+    var danaStatus = document.getElementById("danaStatus").value;
+
+    // Lakukan validasi data pembayaran atau kirim data pembayaran ke server
+    // Disini kita hanya menampilkan alert dengan informasi pembayaran
+    alert("Pembayaran berhasil!\nNomor Dana: " + danaNumber + "\nNama Dana: " + danaName + "\nStatus Dana: " + danaStatus);
+  }
+</script>
+
+</body>
+</html>
